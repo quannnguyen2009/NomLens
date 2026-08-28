@@ -57,16 +57,16 @@ The app uses a modular, two-stage computer vision and sequence recognition pipel
 
 ```mermaid
 flowchart TD
-    A[Input Image / Camera Capture] --> B[Image Preprocessing & 640x640 Letterboxing]
-    B --> C[Stage 1: YOLOv8s Text Column Detection]
-    C --> D[Non-Maximum Suppression (NMS)]
-    D --> E[Column Ordering: Right-to-Left (RTL) & Top-to-Bottom]
-    E --> F[Patch Extraction with Boundary Margins]
-    F --> G[Resize & Pad to 432x48 Image Tensor]
-    G --> H[Stage 2: Residual CRNN + BiGRU Feature Extraction]
-    H --> I[Connectionist Temporal Classification (CTC) Head]
-    I --> J[Greedy CTC Decoding & Vocab Mapping (7,481 classes)]
-    J --> K[Result Rendering with NomNaTong Font & Interactive UI]
+    A["Input Image / Camera Capture"] --> B["Image Preprocessing & 640x640 Letterboxing"]
+    B --> C["Stage 1: YOLOv8s Text Column Detection"]
+    C --> D["Non-Maximum Suppression (NMS)"]
+    D --> E["Column Ordering: Right-to-Left (RTL) & Top-to-Bottom"]
+    E --> F["Patch Extraction with Boundary Margins"]
+    F --> G["Resize & Pad to 432x48 Image Tensor"]
+    G --> H["Stage 2: Residual CRNN + BiGRU Feature Extraction"]
+    H --> I["Connectionist Temporal Classification (CTC) Head"]
+    I --> J["Greedy CTC Decoding & Vocab Mapping (7,481 classes)"]
+    J --> K["Result Rendering with NomNaTong Font & Interactive UI"]
 ```
 
 ### Pipeline Steps:
