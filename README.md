@@ -1,4 +1,4 @@
-# NomLens (NomNa OCR) 📜🔍
+# NomLens
 
 An advanced, on-device AI-powered OCR (Optical Character Recognition) and document scanner application designed specifically for recognizing historical Vietnamese **Hán-Nôm** scripts (chữ Hán & chữ Nôm).
 
@@ -30,7 +30,7 @@ An advanced, on-device AI-powered OCR (Optical Character Recognition) and docume
 
 ## 🌟 Overview
 
-**NomLens** addresses the challenge of digitizing, reading, and preserving centuries of Vietnamese cultural heritage recorded in **Hán-Nôm** manuscripts, woodblocks, stele inscriptions, and genealogical records (*gia phả*).
+**NomLens** addresses the challenge of digitizing, reading, and preserving centuries of Vietnamese cultural heritage recorded in **Hán-Nôm** manuscripts, woodblocks, stele inscriptions, and genealogical records.
 
 Due to the complex, dense structure of vertical Sino-Vietnamese columns, archaic ideographs, and historical reading conventions (Right-to-Left, Top-to-Bottom), modern standard OCR solutions (like Tesseract or generic Latin OCR) fail on Hán-Nôm texts. 
 
