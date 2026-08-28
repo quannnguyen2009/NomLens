@@ -35,4 +35,6 @@ We are excited to announce the initial release of **NomLens (v1.0.0)** — an on
 - **Build Target**: Android 8.0+ (`minSdk = 26`, `targetSdk = 35`, Java 17).
 - **Source Code**: [GitHub Repository](https://github.com/quannnguyen2009/NomLens)
 - **Git Tag**: [`v1.0.0`](https://github.com/quannnguyen2009/NomLens/releases/tag/v1.0.0)
-- **Local Debug APK**: `app/build/outputs/apk/debug/app-debug.apk`
+- **Signed Release APK**: `app/build/outputs/apk/release/app-release.apk`
+- **Debug APK**: `app/build/outputs/apk/debug/app-debug.apk`
+
