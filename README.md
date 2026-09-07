@@ -11,7 +11,7 @@ An advanced, on-device AI-powered OCR (Optical Character Recognition) and docume
 
 ---
 
-## 📌 Table of Contents
+## Table of Contents
 
 - [Overview](#-overview)
 - [Key Features](#-key-features)
@@ -28,7 +28,7 @@ An advanced, on-device AI-powered OCR (Optical Character Recognition) and docume
 
 ---
 
-## 🌟 Overview
+## Overview
 
 **NomLens** addresses the challenge of digitizing, reading, and preserving centuries of Vietnamese cultural heritage recorded in **Hán-Nôm** manuscripts, woodblocks, stele inscriptions, and genealogical records.
 
@@ -38,20 +38,20 @@ Due to the complex, dense structure of vertical Sino-Vietnamese columns, archaic
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-- 📷 **Live Camera & Document Scanner**: Seamless document capture with tap-to-focus, zoom control, flash support, and gallery import via modern Android CameraX.
+- **Live Camera & Document Scanner**: Seamless document capture with tap-to-focus, zoom control, flash support, and gallery import via modern Android CameraX.
 - ⚡ **100% On-Device & Offline OCR**: Optimized TensorFlow Lite (TFLite) execution using multi-threaded CPU inference. Zero server roundtrips, ensuring total privacy and offline field usability.
-- 📜 **Historical Reading Order Preservation**: Automatically sorts detected text columns from **Right-to-Left (RTL)** and **Top-to-Bottom**, matching traditional Vietnamese and East Asian vertical document structure.
-- 🔤 **Authentic Typography Rendering**: Ships with the bundled `NomNaTong-Regular.ttf` font to correctly render rare and extended Hán-Nôm Unicode glyphs (CJK Ideographs Extension A, B, C, etc.) without missing glyph placeholders (`□`).
-- 🎯 **Interactive Bounding Box Canvas**: Overlays detection boxes directly onto the scanned document, allowing users to tap on individual columns to inspect corresponding transcripts and cropped patches.
-- 📊 **Character-Level Confidence Metrics**: Displays per-character recognition confidence, CTC decoding details, and raw character indexes.
-- 📁 **Archive & History Management**: Automatically saves scans and recognized transcripts to local storage, with full copy-to-clipboard, image sharing, and search capabilities.
-- ⚙️ **Tunable Model Thresholds**: Live settings dialog to configure detection confidence thresholds and IoU (Intersection-over-Union) suppression parameters in real-time.
+- **Historical Reading Order Preservation**: Automatically sorts detected text columns from **Right-to-Left (RTL)** and **Top-to-Bottom**, matching traditional Vietnamese and East Asian vertical document structure.
+- **Authentic Typography Rendering**: Ships with the bundled `NomNaTong-Regular.ttf` font to correctly render rare and extended Hán-Nôm Unicode glyphs (CJK Ideographs Extension A, B, C, etc.) without missing glyph placeholders (`□`).
+- **Interactive Bounding Box Canvas**: Overlays detection boxes directly onto the scanned document, allowing users to tap on individual columns to inspect corresponding transcripts and cropped patches.
+- **Character-Level Confidence Metrics**: Displays per-character recognition confidence, CTC decoding details, and raw character indexes.
+- **Archive & History Management**: Automatically saves scans and recognized transcripts to local storage, with full copy-to-clipboard, image sharing, and search capabilities.
+- **Tunable Model Thresholds**: Live settings dialog to configure detection confidence thresholds and IoU (Intersection-over-Union) suppression parameters in real-time.
 
 ---
 
-## 🔄 End-to-End Pipeline
+## End-to-End Pipeline
 
 The app uses a modular, two-stage computer vision and sequence recognition pipeline:
 
@@ -82,7 +82,7 @@ flowchart TD
 
 ---
 
-## 🧠 Machine Learning Models
+## Models
 
 The solution integrates two purpose-built deep learning models trained from scratch on historical Hán-Nôm documents.
 
@@ -123,11 +123,11 @@ The solution integrates two purpose-built deep learning models trained from scra
 
 ---
 
-### 📊 Dataset & Data Source
+### Dataset & Data Source
 
 Both models are trained on the public **NomNaOCR** dataset:
 
-- **Dataset Link**: [Kaggle: NomNaOCR Dataset by Quang Dang](https://www.kaggle.com/datasets/quandang/nomnaocr)
+- **Dataset Link**: [Kaggle: NomNaOCR Dataset by Quan Dang](https://www.kaggle.com/datasets/quandang/nomnaocr)
 - **Dataset Contents**:
   - `Pages/`: High-resolution historical document scans from traditional Vietnamese manuscripts.
   - `Raw/`: Detailed JSON annotation files specifying polygon shapes and bounding coordinates for text columns.
@@ -136,52 +136,7 @@ Both models are trained on the public **NomNaOCR** dataset:
 
 ---
 
-## 🏗️ Project Architecture
-
-```
-nomna/
-├── app/
-│   ├── src/main/
-│   │   ├── assets/
-│   │   │   ├── detect_model.tflite       # YOLOv8s column detector (LiteRT/TFLite)
-│   │   │   ├── recognise_model.tflite    # Residual CRNN text recognizer (TFLite)
-│   │   │   ├── vocab.txt                 # 7,481 Hán-Nôm character vocabulary
-│   │   │   └── NomNaTong-Regular.ttf     # Hán-Nôm font for correct glyph rendering
-│   │   ├── java/com/nomna/nomlens/
-│   │   │   ├── MainActivity.kt           # App Entry Point & Runtime Permissions
-│   │   │   ├── data/
-│   │   │   │   ├── CaptureEntry.kt       # Persistent history data entity
-│   │   │   │   └── CaptureRepository.kt  # Local history & bitmap cache repository
-│   │   │   ├── ml/
-│   │   │   │   ├── Models.kt             # Data classes (BoundingBox, Column, State)
-│   │   │   │   ├── NomPipeline.kt        # Reactive Kotlin Flow inference pipeline
-│   │   │   │   ├── NomRecognizer.kt      # CRNN inference & CTC greedy decoder
-│   │   │   │   └── YoloDetector.kt       # YOLOv8s inference & NMS processor
-│   │   │   └── ui/
-│   │   │       ├── NomLensApp.kt         # Main Compose navigation & state container
-│   │   │       ├── GalleryScreen.kt      # Scan history & transcription viewer
-│   │   │       ├── components/
-│   │   │       │   ├── CameraCaptureView.kt # CameraX viewfinder with zoom/flash
-│   │   │       │   ├── ImageCanvas.kt       # Interactive bounding box overlays
-│   │   │       │   ├── ResultSheet.kt       # Inspection bottom sheet & analytics
-│   │   │       │   └── SettingsDialog.kt    # Detection threshold adjustments
-│   │   │       └── theme/                   # Material 3 colors, typography, theme
-│   │   └── AndroidManifest.xml
-│   └── build.gradle.kts
-├── nomna-detect.ipynb                    # Training notebook for YOLOv8s detector
-├── nomna-recognise.ipynb                 # Training notebook for Residual CRNN model
-├── best_float32_detect.tflite            # Standalone YOLO detector (Float32)
-├── best_int8_detect.tflite               # Standalone YOLO detector (INT8 quantized)
-├── recognise_residual_float32.tflite     # Standalone CRNN recognizer (Float32)
-├── recognise_residual_int8.tflite        # Standalone CRNN recognizer (INT8 quantized)
-├── vocab.txt                             # Master vocabulary file
-├── NomNaTong-Regular.ttf                 # Master font file
-└── README.md
-```
-
----
-
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 
@@ -222,7 +177,7 @@ nomna/
 
 ---
 
-## 🛠️ Model Training & Export
+## Model Training & Export
 
 If you wish to retrain the models on updated datasets or fine-tune them:
 
@@ -265,7 +220,7 @@ Open and execute `nomna-recognise.ipynb` in Kaggle:
 
 ---
 
-## 🧰 Tech Stack
+## Tech Stack
 
 - **Core & UI**: [Kotlin 2.0](https://kotlinlang.org/), [Jetpack Compose](https://developer.android.com/jetpack/compose), [Material 3](https://m3.material.io/)
 - **Camera Integration**: [AndroidX CameraX](https://developer.android.com/training/camerax) (Lifecycle, Camera2, View)
@@ -276,8 +231,7 @@ Open and execute `nomna-recognise.ipynb` in Kaggle:
 
 ---
 
-## 🤝 Acknowledgments
+## Acknowledgments
 
-- **Dataset Creator**: Quang Dang for publishing the [NomNaOCR Dataset](https://www.kaggle.com/datasets/quandang/nomnaocr) on Kaggle.
+- **Dataset Creator**: Quan Dang for publishing the [NomNaOCR Dataset](https://www.kaggle.com/datasets/quandang/nomnaocr) on Kaggle.
 - **Font & Glyph Standards**: [Vietnamese Nôm Preservation Foundation](https://www.nomfoundation.org/) (*Hội Bảo tồn Di sản chữ Nôm*) for the `NomNaTong` open font and character definitions.
-- **Ultralytics**: For the efficient YOLOv8 object detection framework.
