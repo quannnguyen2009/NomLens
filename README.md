@@ -1,6 +1,6 @@
 # NomLens
 
-An advanced, on-device AI-powered OCR (Optical Character Recognition) and document scanner application designed specifically for recognizing historical Vietnamese **Hán-Nôm** scripts (chữ Hán & chữ Nôm).
+An advanced, on-device AI-powered OCR and document scanner application designed specifically for recognizing historical Vietnamese **Hán-Nôm** scripts (chữ Hán & chữ Nôm).
 
 [![Platform](https://img.shields.io/badge/Platform-Android-3DDC84.svg?style=flat&logo=android)](https://www.android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-7F52FF.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
@@ -11,7 +11,7 @@ An advanced, on-device AI-powered OCR (Optical Character Recognition) and docume
 
 ---
 
-## Table of Contents
+## Table of contents
 
 - [Overview](#-overview)
 - [Key Features](#-key-features)
@@ -38,47 +38,47 @@ Due to the complex, dense structure of vertical Sino-Vietnamese columns, archaic
 
 ---
 
-## Key Features
+## Key features
 
-- **Live Camera & Document Scanner**: Seamless document capture with tap-to-focus, zoom control, flash support, and gallery import via modern Android CameraX.
-- ⚡ **100% On-Device & Offline OCR**: Optimized TensorFlow Lite (TFLite) execution using multi-threaded CPU inference. Zero server roundtrips, ensuring total privacy and offline field usability.
-- **Historical Reading Order Preservation**: Automatically sorts detected text columns from **Right-to-Left (RTL)** and **Top-to-Bottom**, matching traditional Vietnamese and East Asian vertical document structure.
-- **Authentic Typography Rendering**: Ships with the bundled `NomNaTong-Regular.ttf` font to correctly render rare and extended Hán-Nôm Unicode glyphs (CJK Ideographs Extension A, B, C, etc.) without missing glyph placeholders (`□`).
-- **Interactive Bounding Box Canvas**: Overlays detection boxes directly onto the scanned document, allowing users to tap on individual columns to inspect corresponding transcripts and cropped patches.
-- **Character-Level Confidence Metrics**: Displays per-character recognition confidence, CTC decoding details, and raw character indexes.
-- **Archive & History Management**: Automatically saves scans and recognized transcripts to local storage, with full copy-to-clipboard, image sharing, and search capabilities.
-- **Tunable Model Thresholds**: Live settings dialog to configure detection confidence thresholds and IoU (Intersection-over-Union) suppression parameters in real-time.
+- **Live camera & document scanner**: Seamless document capture with tap-to-focus, zoom control, flash support, and gallery import via modern Android CameraX.
+- **100% on-device & offline OCR**: Optimized TensorFlow Lite (TFLite) execution using multi-threaded CPU inference. Zero server roundtrips, ensuring total privacy and offline field usability.
+- **Historical reading order preservation**: Automatically sorts detected text columns from **Right-to-Left (RTL)** and **Top-to-Bottom**, matching traditional Vietnamese and East Asian vertical document structure.
+- **Authentic typography rendering**: Ships with the bundled `NomNaTong-Regular.ttf` font to correctly render rare and extended Hán-Nôm Unicode glyphs (CJK Ideographs Extension A, B, C, etc.) without missing glyph placeholders (`□`).
+- **Interactive bounding box canvas**: Overlays detection boxes directly onto the scanned document, allowing users to tap on individual columns to inspect corresponding transcripts and cropped patches.
+- **Character-level confidence metrics**: Displays per-character recognition confidence, CTC decoding details, and raw character indexes.
+- **Archive & history management**: Automatically saves scans and recognized transcripts to local storage, with full copy-to-clipboard, image sharing, and search capabilities.
+- **Tunable model thresholds**: Live settings dialog to configure detection confidence thresholds and IoU (Intersection-over-Union) suppression parameters in real-time.
 
 ---
 
-## End-to-End Pipeline
+## End-to-end pipeline
 
 The app uses a modular, two-stage computer vision and sequence recognition pipeline:
 
 ```mermaid
 flowchart TD
-    A["Input Image / Camera Capture"] --> B["Image Preprocessing & 640x640 Letterboxing"]
-    B --> C["Stage 1: YOLOv8s Text Column Detection"]
-    C --> D["Non-Maximum Suppression (NMS)"]
-    D --> E["Column Ordering: Right-to-Left (RTL) & Top-to-Bottom"]
-    E --> F["Patch Extraction with Boundary Margins"]
-    F --> G["Resize & Pad to 432x48 Image Tensor"]
-    G --> H["Stage 2: Residual CRNN + BiGRU Feature Extraction"]
-    H --> I["Connectionist Temporal Classification (CTC) Head"]
-    I --> J["Greedy CTC Decoding & Vocab Mapping (7,481 classes)"]
-    J --> K["Result Rendering with NomNaTong Font & Interactive UI"]
+    A["Input image / camera capture"] --> B["Image preprocessing & 640x640 letterboxing"]
+    B --> C["Stage 1: YOLOv8s text column detection"]
+    C --> D["Non-maximum suppression (NMS)"]
+    D --> E["Column ordering: right-to-left (RTL) & top-to-bottom"]
+    E --> F["Patch extraction with boundary margins"]
+    F --> G["Resize & pad to 432x48 image tensor"]
+    G --> H["Stage 2: residual CRNN + BiGRU feature extraction"]
+    H --> I["Connectionist temporal classification (CTC) head"]
+    I --> J["Greedy CTC decoding & vocab mapping (7,481 classes)"]
+    J --> K["Result rendering with NomNaTong font & interactive UI"]
 ```
 
-### Pipeline Steps:
+### Pipeline steps:
 
-1. **Image Preprocessing**: The input image is converted to RGB and letterboxed to $640 \times 640$ pixels while maintaining aspect ratio, normalized to $[0.0, 1.0]$.
-2. **Text Column Detection**: The YOLOv8s detector outputs candidate boxes $[c_x, c_y, w, h, \text{score}]$.
-3. **NMS & Coordinate Mapping**: Candidates undergo Non-Maximum Suppression (default IoU threshold = $0.45$, confidence threshold = $0.15$) and are mapped back to original image dimensions.
-4. **Spatial Column Sorting**: Bounding boxes are sorted by X-center descending (Right-to-Left) and Y-min ascending:
+1. **Image preprocessing**: The input image is converted to RGB and letterboxed to $640 \times 640$ pixels while maintaining aspect ratio, normalized to $[0.0, 1.0]$.
+2. **Text column detection**: The YOLOv8s detector outputs candidate boxes $[c_x, c_y, w, h, \text{score}]$.
+3. **NMS & coordinate mapping**: Candidates undergo Non-Maximum Suppression (default IoU threshold = $0.45$, confidence threshold = $0.15$) and are mapped back to original image dimensions.
+4. **Spatial column sorting**: Bounding boxes are sorted by X-center descending (Right-to-Left) and Y-min ascending:
    $$\text{Order} = \text{SortBy}(\text{centerX} \downarrow, \text{yMin} \uparrow)$$
-5. **Column Normalization**: Each detected column is cropped with adaptive boundary margins and resized/padded onto a $432 \text{ (Height)} \times 48 \text{ (Width)} \times 3 \text{ (RGB)}$ canvas with white background padding.
-6. **Sequential Recognition**: The CRNN processes the $432 \times 48 \times 3$ column into 54 vertical timesteps across a 7,481-token vocabulary.
-7. **Greedy CTC Decoding**: Consecutive duplicate tokens are collapsed and blank padding tokens (`[PAD]`, index 0) are eliminated to generate the final text sequence.
+5. **Column normalization**: Each detected column is cropped with adaptive boundary margins and resized/padded onto a $432 \text{ (Height)} \times 48 \text{ (Width)} \times 3 \text{ (RGB)}$ canvas with white background padding.
+6. **Sequential recognition**: The CRNN processes the $432 \times 48 \times 3$ column into 54 vertical timesteps across a 7,481-token vocabulary.
+7. **Greedy CTC decoding**: Consecutive duplicate tokens are collapsed and blank padding tokens (`[PAD]`, index 0) are eliminated to generate the final text sequence.
 
 ---
 
@@ -86,49 +86,49 @@ flowchart TD
 
 The solution integrates two purpose-built deep learning models trained from scratch on historical Hán-Nôm documents.
 
-### 1. Text Column Detector (YOLOv8s)
+### 1. Text column detector (YOLOv8s)
 
-- **Model Type**: Single-stage Object Detector based on **Ultralytics YOLOv8s** (Small).
+- **Model type**: Single-stage Object Detector based on **Ultralytics YOLOv8s** (Small).
 - **Task**: Document layout analysis — localizing dense vertical text columns in aged, noisy, and stained manuscripts.
-- **Input Tensor**: `[1, 3, 640, 640]` (Float32 / INT8, normalized to $[0, 1]$).
-- **Output Tensor**: `[1, 5, 8400]` ($c_x, c_y, w, h, \text{confidence}$).
-- **Training Method**:
-  - **Pre-training / Architecture**: YOLOv8s initialized with CSPDarknet backbone and PAN-FPN neck.
-  - **Dataset Split**: 85% Train, 15% Validation extracted from page-level annotations.
+- **Input tensor**: `[1, 3, 640, 640]` (Float32 / INT8, normalized to $[0, 1]$).
+- **Output tensor**: `[1, 5, 8400]` ($c_x, c_y, w, h, \text{confidence}$).
+- **Training method**:
+  - **Pre-training / architecture**: YOLOv8s initialized with CSPDarknet backbone and PAN-FPN neck.
+  - **Dataset split**: 85% Train, 15% Validation extracted from page-level annotations.
   - **Augmentations**: Color space perturbation ($\text{HSV}_h=0.05, \text{HSV}_s=0.8, \text{HSV}_v=0.6$), small-angle rotation ($\pm 5.0^\circ$), scaling ($0.2$), and strictly **no horizontal flipping** (`fliplr=0.0`) to avoid mirroring vertical columns.
-  - **Optimizer & Hyperparameters**: 50 Epochs, batch size 16, image size 640.
+  - **Optimizer & hyperparameters**: 50 Epochs, batch size 16, image size 640.
   - **Quantization**: Exported to LiteRT / TensorFlow Lite with post-training INT8 / Float32 quantization (~11.5 MB for INT8, ~44.7 MB for Float32).
 
 ---
 
-### 2. Text Recognizer (Residual CRNN + BiGRU + CTC)
+### 2. Text recognizer (Residual CRNN + BiGRU + CTC)
 
-- **Model Type**: Deep Convolutional Recurrent Neural Network (**Residual CRNN x CTC**).
+- **Model type**: Deep Convolutional Recurrent Neural Network (**Residual CRNN x CTC**).
 - **Task**: Sequential optical character recognition of vertical Hán-Nôm text lines.
-- **Input Tensor**: `[1, 432, 48, 3]` (Height: 432, Width: 48, Channels: 3).
-- **Output Tensor**: `[1, 54, 7481]` (54 vertical timesteps $\times$ 7,481 vocabulary classes).
-- **Architecture Details**:
-  - **Residual CNN Backbone**: Stem convolution ($3 \to 64$) followed by 4 Residual stages with batch normalization, ReLU activations, and dropout.
-  - **Custom Vertical Pooling**: Utilizes asymmetric pooling (`MaxPool2d(2, 2)` for stages 1-2, and `MaxPool2d(2, 1)` for stage 3) to downsample width to 12 while preserving 54 vertical sequence slices.
-  - **Learned Width Projection**: Replaces heuristic pooling with a learned `Conv2d(512, 512, kernel_size=(1, 12))` + `BatchNorm` layer to collapse spatial width into a 1D sequence tensor $(N, 54, 512)$.
-  - **Recurrent Context Modeling**: 2-layer Bidirectional GRU (`BiGRU`, hidden size = 256, dropout = 0.2), outputting 512 bidirectional context features.
-  - **Transcription Head**: Linear projection layer from 512 to 7,481 logits.
-- **Training Method**:
-  - **Loss Function**: PyTorch `CTCLoss(blank=0, zero_infinity=True)`.
+- **Input tensor**: `[1, 432, 48, 3]` (Height: 432, Width: 48, Channels: 3).
+- **Output tensor**: `[1, 54, 7481]` (54 vertical timesteps $\times$ 7,481 vocabulary classes).
+- **Architecture details**:
+  - **Residual CNN backbone**: Stem convolution ($3 \to 64$) followed by 4 Residual stages with batch normalization, ReLU activations, and dropout.
+  - **Custom vertical pooling**: Utilizes asymmetric pooling (`MaxPool2d(2, 2)` for stages 1-2, and `MaxPool2d(2, 1)` for stage 3) to downsample width to 12 while preserving 54 vertical sequence slices.
+  - **Learned width projection**: Replaces heuristic pooling with a learned `Conv2d(512, 512, kernel_size=(1, 12))` + `BatchNorm` layer to collapse spatial width into a 1D sequence tensor $(N, 54, 512)$.
+  - **Recurrent context modeling**: 2-layer Bidirectional GRU (`BiGRU`, hidden size = 256, dropout = 0.2), outputting 512 bidirectional context features.
+  - **Transcription head**: Linear projection layer from 512 to 7,481 logits.
+- **Training method**:
+  - **Loss function**: PyTorch `CTCLoss(blank=0, zero_infinity=True)`.
   - **Optimizer**: AdamW ($\text{LR} = 1\times 10^{-3}$, weight decay = $1\times 10^{-4}$).
   - **Scheduler**: `OneCycleLR` with cosine annealing.
   - **Regularization**: Early stopping (patience = 5) with best model checkpointing.
   - **Vocabulary**: 7,481 classes (`[PAD]` blank token + 7,480 Hán-Nôm characters compiled in `vocab.txt`).
-  - **Export Pipeline**: PyTorch `.pt` $\to$ ONNX $\to$ `onnx2tf` $\to$ TensorFlow Lite Float32 / INT8 (`recognise_model.tflite`).
+  - **Export pipeline**: PyTorch `.pt` $\to$ ONNX $\to$ `onnx2tf` $\to$ TensorFlow Lite Float32 / INT8 (`recognise_model.tflite`).
 
 ---
 
-### Dataset & Data Source
+### Dataset & data source
 
 Both models are trained on the public **NomNaOCR** dataset:
 
-- **Dataset Link**: [Kaggle: NomNaOCR Dataset by Quan Dang](https://www.kaggle.com/datasets/quandang/nomnaocr)
-- **Dataset Contents**:
+- **Dataset link**: [Kaggle: NomNaOCR Dataset by Quan Dang](https://www.kaggle.com/datasets/quandang/nomnaocr)
+- **Dataset contents**:
   - `Pages/`: High-resolution historical document scans from traditional Vietnamese manuscripts.
   - `Raw/`: Detailed JSON annotation files specifying polygon shapes and bounding coordinates for text columns.
   - `Patches/`: Extracted text column crops along with ground truth transcriptions (`All.txt` and `Validate.txt`).
@@ -136,7 +136,7 @@ Both models are trained on the public **NomNaOCR** dataset:
 
 ---
 
-## Installation & Setup
+## Installation & setup
 
 ### Prerequisites
 
@@ -147,7 +147,7 @@ Both models are trained on the public **NomNaOCR** dataset:
   - `targetSdk` / `compileSdk`: **35** (Android 15)
 - **Physical Device or Emulator** with camera support.
 
-### Steps to Build and Run
+### Steps to build and run
 
 1. **Clone the repository**:
    ```bash
@@ -177,11 +177,11 @@ Both models are trained on the public **NomNaOCR** dataset:
 
 ---
 
-## Model Training & Export
+## Model training & export
 
 If you wish to retrain the models on updated datasets or fine-tune them:
 
-### 1. Training the Detector
+### 1. Training the detector
 Open and execute `nomna-detect.ipynb` in [Kaggle](https://www.kaggle.com/) with GPU enabled:
 1. Attach the [quandang/nomnaocr](https://www.kaggle.com/datasets/quandang/nomnaocr) dataset.
 2. Run data preparation cells to generate YOLO formatted labels from raw JSON annotations.
@@ -193,7 +193,7 @@ Open and execute `nomna-detect.ipynb` in [Kaggle](https://www.kaggle.com/) with 
    model.export(format="litert", quantize=8) # or quantize=False for float32
    ```
 
-### 2. Training the Recognizer
+### 2. Training the recognizer
 Open and execute `nomna-recognise.ipynb` in Kaggle:
 1. Load training transcripts and column crops from `Patches/`.
 2. Train the PyTorch `CRNN` architecture with `CTCLoss` and `AdamW`.
@@ -220,18 +220,18 @@ Open and execute `nomna-recognise.ipynb` in Kaggle:
 
 ---
 
-## Tech Stack
+## Tech stack
 
 - **Core & UI**: [Kotlin 2.0](https://kotlinlang.org/), [Jetpack Compose](https://developer.android.com/jetpack/compose), [Material 3](https://m3.material.io/)
-- **Camera Integration**: [AndroidX CameraX](https://developer.android.com/training/camerax) (Lifecycle, Camera2, View)
-- **On-Device Inference**: [TensorFlow Lite](https://www.tensorflow.org/lite) (`org.tensorflow:tensorflow-lite`, `tensorflow-lite-support`)
-- **Asynchronous Execution**: Kotlin Coroutines & Kotlin Flow
-- **Image Processing & Loading**: Android Graphics (`Bitmap`, `Canvas`), [Coil](https://coil-kt.github.io/coil/)
-- **Machine Learning & Training**: [PyTorch](https://pytorch.org/), [Ultralytics YOLOv8](https://docs.ultralytics.com/), [ONNX](https://onnx.ai/), [onnx2tf](https://github.com/PINTO0309/onnx2tf), OpenCV, NumPy, Pandas
+- **Camera integration**: [AndroidX CameraX](https://developer.android.com/training/camerax) (Lifecycle, Camera2, View)
+- **On-device inference**: [TensorFlow Lite](https://www.tensorflow.org/lite) (`org.tensorflow:tensorflow-lite`, `tensorflow-lite-support`)
+- **Asynchronous execution**: Kotlin Coroutines & Kotlin Flow
+- **Image processing & loading**: Android Graphics (`Bitmap`, `Canvas`), [Coil](https://coil-kt.github.io/coil/)
+- **Machine learning & training**: [PyTorch](https://pytorch.org/), [Ultralytics YOLOv8](https://docs.ultralytics.com/), [ONNX](https://onnx.ai/), [onnx2tf](https://github.com/PINTO0309/onnx2tf), OpenCV, NumPy, Pandas
 
 ---
 
 ## Acknowledgments
 
-- **Dataset Creator**: Quan Dang for publishing the [NomNaOCR Dataset](https://www.kaggle.com/datasets/quandang/nomnaocr) on Kaggle.
-- **Font & Glyph Standards**: [Vietnamese Nôm Preservation Foundation](https://www.nomfoundation.org/) (*Hội Bảo tồn Di sản chữ Nôm*) for the `NomNaTong` open font and character definitions.
+- **Dataset creator**: Quan Dang for publishing the [NomNaOCR Dataset](https://www.kaggle.com/datasets/quandang/nomnaocr) on Kaggle.
+- **Font & glyph standards**: [Vietnamese Nôm Preservation Foundation](https://www.nomfoundation.org/) (*Hội Bảo tồn Di sản chữ Nôm*) for the `NomNaTong` open font and character definitions.
